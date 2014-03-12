@@ -1,3 +1,4 @@
-/Player.class
-/Dealer.class
-/User.class
+/Card.class
+/Face.class
+/Suit.class
+/Deck.class
