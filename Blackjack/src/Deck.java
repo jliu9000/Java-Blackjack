@@ -2,10 +2,10 @@ import java.util.ArrayList;
 
 public class Deck {
 
-	private ArrayList<Card> deck;
+	private ArrayList<Card> cards;
 	Deck(int size)
 	{
-		deck = createDeck(size);
+		cards = createDeck(size);
 		shuffleDeck();
 	}
 	
@@ -28,21 +28,22 @@ public class Deck {
 	
 	public void shuffleDeck()
 	{
-		for(int i = 0; i < deck.size(); i++)
+		int size = cards.size();
+		for(int i = 0; i < size; i++)
 		{
-			int switchIndex = (int)Math.floor((Math.random() * (deck.size() - 1)));
-			Card tempSwitch = deck.get(switchIndex);
-			Card tempI = deck.get(i);
-			deck.remove(i);
-			deck.add(i, tempSwitch);
-			deck.remove(switchIndex);
-			deck.add(switchIndex, tempI);
+			int switchIndex = (int)Math.floor((Math.random() * (size - 1)));
+			Card tempSwitch = cards.get(switchIndex);
+			Card tempI = cards.get(i);
+			cards.remove(i);
+			cards.add(i, tempSwitch);
+			cards.remove(switchIndex);
+			cards.add(switchIndex, tempI);
 		}
 	}
 	
 	public int getDeckSize()
 	{
-		return deck.size();
+		return cards.size();
 	}
 	
 	public void dealCard()
