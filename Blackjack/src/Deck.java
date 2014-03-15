@@ -1,8 +1,8 @@
 import java.util.ArrayList;
-
 public class Deck {
 
 	private ArrayList<Card> cards;
+	private ArrayList<Hand> hands;
 	Deck(int size)
 	{
 		cards = createDeck(size);
@@ -46,8 +46,25 @@ public class Deck {
 		return cards.size();
 	}
 	
-	public void dealCard()
+	//Not sure about this parameter
+	public void dealHand(int playerNumber)
 	{
-		
+		if(cards.size() > 1)
+		{
+			Hand hand = new Hand(cards.get(0), cards.get(1));
+			hands.add(playerNumber, hand);
+			//Remove the top 2 cards from the deck
+			cards.remove(0);
+			cards.remove(0);
+		}
+	}
+	
+	public void dealCard(int playerNumber)
+	{
+		if(cards.size() > 0)
+		{
+			hands.get(playerNumber).addCard(cards.get(0));
+			cards.remove(0);
+		}
 	}
 }
