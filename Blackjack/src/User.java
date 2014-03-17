@@ -1,13 +1,15 @@
 
 public class User extends Player {
 	private int playerNumber;
-	public Hand hand;
-	User(int ID, Hand intialHand)
+	User(int ID, Hand begHand)
 	{
 		playerNumber = ID;
-		hand = intialHand;
+		hand = begHand;
 	}
-
+	public void doubleDown(Deck deck)
+	{
+		this.hand.addCard(deck.dealCard());
+	}
 }
 //split()
 /**********

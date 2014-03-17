@@ -1,9 +1,16 @@
 
 public class Dealer extends Player {
-	public Hand initialHand;
-	Dealer(Hand hand)
+	Dealer(Hand begHand)
 	{
-		initialHand = hand;
+		this.hand= begHand;
+	}
+	public void play(Deck deck)
+	{
+		if(this.hand.getValueOfHand() < 17){
+			this.hand.addCard(deck.dealCard());
+		}else{
+			stand();
+		}
 	}
 }
 
