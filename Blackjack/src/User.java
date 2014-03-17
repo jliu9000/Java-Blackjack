@@ -1,5 +1,12 @@
 
 public class User extends Player {
+	private int playerNumber;
+	public Hand hand;
+	User(int ID, Hand intialHand)
+	{
+		playerNumber = ID;
+		hand = intialHand;
+	}
 
 }
 //split()

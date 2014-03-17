@@ -47,7 +47,7 @@ public class Deck {
 	}
 	
 	//Not sure about this parameter
-	public void dealHand(int playerNumber)
+	public Hand dealHand(int playerNumber)
 	{
 		if(cards.size() > 1)
 		{
@@ -56,6 +56,7 @@ public class Deck {
 			//Remove the top 2 cards from the deck
 			cards.remove(0);
 			cards.remove(0);
+			return hand;
 		}
 	}
 	

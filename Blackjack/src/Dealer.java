@@ -1,5 +1,10 @@
 
 public class Dealer extends Player {
+	public Hand initialHand;
+	Dealer(Hand hand)
+	{
+		initialHand = hand;
+	}
 }
 
 //play()
