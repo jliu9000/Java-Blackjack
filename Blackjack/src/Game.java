@@ -8,7 +8,7 @@ public class Game {
 	Game(int numberOfPlayers)
 	{
 		users = createUser(numberOfPlayers);
-		dealer = new Dealer(deck.dealHand());
+		dealer = new Dealer(this.deck.dealHand());
 	}
 
 	private ArrayList<User> createUser(int size)
@@ -16,7 +16,7 @@ public class Game {
 		ArrayList<User> tempUser = new ArrayList<User>();
 
 		for(int i =0; i < size; i++){
-			User createdUser = new User(i, deck.dealHand());
+			User createdUser = new User(i, this.deck.dealHand());
 			tempUser.add(createdUser);
 		}
 		return tempUser;
