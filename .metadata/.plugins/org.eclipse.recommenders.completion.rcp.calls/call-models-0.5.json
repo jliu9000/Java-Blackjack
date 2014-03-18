@@ -4,5 +4,10 @@
     "location": "C:\\Program Files\\Java\\jre7\\lib\\rt.jar",
     "status": "RESOLVED",
     "error": "No class path info available for \u0027C:\\Program Files\\Java\\jre7\\lib\\rt.jar\u0027. Skipped."
+  },
+  "C:\\Users\\John\\Documents\\GitHub\\Java-Blackjack\\Blackjack\\src": {
+    "location": "C:\\Users\\John\\Documents\\GitHub\\Java-Blackjack\\Blackjack\\src",
+    "status": "UNRESOLVED",
+    "error": "No class path info available for \u0027C:\\Users\\John\\Documents\\GitHub\\Java-Blackjack\\Blackjack\\src\u0027. Skipped."
   }
 }

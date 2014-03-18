@@ -111,4 +111,8 @@ public class Hand {
 	{
 		return bust;
 	}
+
+	public ArrayList<Card> getCards() {
+		return cards;
+	}
 }

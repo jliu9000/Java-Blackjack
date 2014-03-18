@@ -6,7 +6,6 @@ import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URL;
-import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
@@ -14,12 +13,11 @@ public class GUI extends Applet implements Runnable, MouseListener {
 
 	private static final int WIDTH = 720;
 	private static final int HEIGHT = 450;
-	private Image background, deckImg;
+	private Image background, deck;
 	private URL base;
 	private int mouseX, mouseY;
 	private int currentPlayer, totalPlayers;
 	private int gameStage; //stage 0 = start screen, stage 1 = options, stage 2 = in game
-	private boolean handDelt; //start play if hand has been delt.  reset this boolean at the end of dealer turn
 
 	@Override
 	public void init() {
@@ -38,9 +36,8 @@ public class GUI extends Applet implements Runnable, MouseListener {
 		}
 
 		background = getImage(base, "images/start.png");
-		deckImg = getImage(base, "images/back.png");
+		deck = getImage(base, "images/back.png");
 		gameStage = 0;
-		handDelt = false;
 	}
 
 	@Override
@@ -80,20 +77,19 @@ public class GUI extends Applet implements Runnable, MouseListener {
 		
 		//draw ingame board
 		if (gameStage > 1) {
-			g.drawImage(deckImg, 490, 350, this);
+			g.drawImage(deck, 490, 350, this);
 			g.drawString("Round is currently on Player:  ", 25, 400);
 			g.drawString(Integer.toString(currentPlayer), 25, 420);
 			for (int i = 1; i <= totalPlayers; i++) {
 				g.drawString("Player " + i, -70 + 90 * i, 100);
 			}
 			
-
-				
-		
 			
+			for (int i = 1; i <= totalPlayers; i++){
+				//draw each player's hand
+			}
 			
 			//draw dealer's hand
-			
 		}
 	}
 
@@ -166,14 +162,6 @@ public class GUI extends Applet implements Runnable, MouseListener {
 					}
 					
 				}
-				
-				
-				
-				//transition from options screen, must deal hand and start round if this occurs
-				if (gameStage == 2){
-
-				}
-				
 
 			}
 

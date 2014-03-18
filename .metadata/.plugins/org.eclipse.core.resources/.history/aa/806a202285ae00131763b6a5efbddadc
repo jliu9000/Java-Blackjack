@@ -19,7 +19,9 @@ public class GUI extends Applet implements Runnable, MouseListener {
 	private int mouseX, mouseY;
 	private int currentPlayer, totalPlayers;
 	private int gameStage; //stage 0 = start screen, stage 1 = options, stage 2 = in game
+	private Deck deck;
 	private boolean handDelt; //start play if hand has been delt.  reset this boolean at the end of dealer turn
+	private ArrayList<Hand> currentHands;  //*******will this change?
 
 	@Override
 	public void init() {
@@ -89,7 +91,11 @@ public class GUI extends Applet implements Runnable, MouseListener {
 			
 
 				
-		
+			for (Hand h : currentHands){
+				for (Card c : h.getCards()){
+					g.drawImage(c.getImage(), 490, 350, this);
+				}
+			}
 			
 			
 			//draw dealer's hand
@@ -171,7 +177,10 @@ public class GUI extends Applet implements Runnable, MouseListener {
 				
 				//transition from options screen, must deal hand and start round if this occurs
 				if (gameStage == 2){
-
+					deck = new Deck(52);
+					for(int i = 1; i<=totalPlayers; i++){
+						deck.dealHand(i);
+					}
 				}
 				
 

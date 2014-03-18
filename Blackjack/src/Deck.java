@@ -3,6 +3,7 @@ public class Deck {
 
 	private ArrayList<Card> cards;
 	private ArrayList<Hand> hands;
+	
 	Deck(int size)
 	{
 		cards = createDeck(size);
@@ -67,4 +68,10 @@ public class Deck {
 			cards.remove(0);
 		}
 	}
+
+	public ArrayList<Hand> getHands() {
+		return hands;
+	}
+
+
 }

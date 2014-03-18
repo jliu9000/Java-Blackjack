@@ -1,15 +1,28 @@
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 
 public class Card {
 
 	private final Suit suit;
 	private final Face face;
 	private String imageFile;
-	
+	BufferedImage cardImage = null;
+
 	public Card(Suit suit, Face face)
 	{
 		this.suit = suit;
 		this.face = face;
 		setImageFile(suit, face);
+		
+		try {
+		    cardImage = ImageIO.read(new File(imageFile));
+		} catch (IOException e) {
+		}
+
 	}
 	
 	private void setImageFile(Suit s, Face f)
@@ -268,5 +281,9 @@ public class Card {
 	public String getImageFile()
 	{
 		return this.imageFile;
+	}
+	
+	public BufferedImage getImage(){
+		return this.cardImage;
 	}
 }
