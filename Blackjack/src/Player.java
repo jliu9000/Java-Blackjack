@@ -32,13 +32,13 @@ public class Player {
 		if (deck.getDeckSize() <= 0){
 			System.out.println("Deck has no more cards");
 		}
-		else if(this.hands.get(0).bustHand() || this.hands.get(0).blackjackHand())
+		else if(this.hands.get(numberOfHands-1).bustHand() || this.hands.get(numberOfHands-1).blackjackHand())
 		{
 			System.out.println("Cannot hit the hand is already busted or you have blackjack!");
 		}
 		else
 		{
-			this.hands.get(0).addCard(deck.dealCard());
+			this.hands.get(numberOfHands-1).addCard(deck.dealCard());
 		}
 	}
 	public void stand()

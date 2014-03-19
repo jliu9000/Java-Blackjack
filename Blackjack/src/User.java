@@ -8,13 +8,18 @@ public class User extends Player {
 	}
 	public void doubleDown(Deck deck)
 	{
+		if(hands.get(numberOfHands-1).getNumberOfCards() != 2){
+			System.out.println("Can only double down on initial hand");
+		}
+		else{
 		this.hands.get(numberOfHands-1).addCard(deck.dealCard());
 		stand();
 		numberOfHands--;
+		}
 	}
 	public void split(Deck deck)
 	{
-		if (this.hands.get(0).getNumberOfCards() != 2)
+		if (this.hands.get(numberOfHands-1).getNumberOfCards() != 2)
 		{
 			System.out.println("Can only split on initial hand");
 		}
@@ -25,14 +30,7 @@ public class User extends Player {
 		}
 	}
 }
-//split()
-/**********
-uses GameLogic to create new hand,
-copy 1 card from hand,
-delete card from original hand,
-hit() on both hands automatically (fills hand),
-play each hand regularly.
-*****************/
+
 
 //doubleDown()
 /*******************
