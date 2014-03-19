@@ -3,7 +3,6 @@ public class Deck {
 
 	private ArrayList<Card> cards;
 	private ArrayList<Hand> hands;
-	
 	Deck(int size)
 	{
 		cards = createDeck(size);
@@ -48,30 +47,20 @@ public class Deck {
 	}
 	
 	//Not sure about this parameter
-	public void dealHand(int playerNumber)
+	public Hand dealHand()
 	{
-		if(cards.size() > 1)
-		{
 			Hand hand = new Hand(cards.get(0), cards.get(1));
-			hands.add(playerNumber, hand);
-			//Remove the top 2 cards from the deck
+		//Remove the top 2 cards from the deck
 			cards.remove(0);
 			cards.remove(0);
-		}
+			return hand;
 	}
 	
-	public void dealCard(int playerNumber)
+	public Card dealCard()
 	{
-		if(cards.size() > 0)
-		{
-			hands.get(playerNumber).addCard(cards.get(0));
+
+			Card tempCard = cards.get(0);
 			cards.remove(0);
-		}
+			return tempCard;
 	}
-
-	public ArrayList<Hand> getHands() {
-		return hands;
-	}
-
-
 }

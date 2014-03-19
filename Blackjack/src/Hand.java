@@ -97,6 +97,15 @@ public class Hand {
 		return cards.size();
 	}
 	
+	public Hand splitHand(Deck deck)
+	{
+
+		Hand secondHand = new Hand(cards.get(1), deck.dealCard());
+		cards.remove(1);
+		cards.add(deck.dealCard());
+		return secondHand;
+	}
+	
 	public int getValueOfHand()
 	{
 		return total;
@@ -110,9 +119,5 @@ public class Hand {
 	public boolean bustHand()
 	{
 		return bust;
-	}
-
-	public ArrayList<Card> getCards() {
-		return cards;
 	}
 }
