@@ -14,10 +14,15 @@ public class User extends Player {
 	}
 	public void split(Deck deck)
 	{
+		if (this.hands.get(0).getNumberOfCards() != 2)
+		{
+			System.out.println("Can only split on initial hand");
+		}
+		else{
 		Hand secondHand = this.hands.get(numberOfHands-1).splitHand(deck);
 		this.hands.add(secondHand);
 		numberOfHands++;
-		
+		}
 	}
 }
 //split()
