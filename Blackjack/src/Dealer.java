@@ -1,9 +1,24 @@
+import java.util.ArrayList;
+
 
 public class Dealer extends Player {
 	Dealer(Hand begHand)
 	{
 		this.hands.add(begHand);
+		
 	}
+	
+	Dealer(){
+		hands = new ArrayList<Hand>();
+	}
+	
+	public void takeHand(Hand h){
+		hands.add(h);
+		numberOfHands++;
+	}
+	
+	
+	
 	public void play(Deck deck)
 	{
 		if(this.hands.get(0).getValueOfHand() < 17){

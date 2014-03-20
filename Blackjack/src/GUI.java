@@ -18,8 +18,11 @@ public class GUI extends Applet implements Runnable, MouseListener {
 	private URL base;
 	private int mouseX, mouseY;
 	private int currentPlayer, totalPlayers;
-	private int gameStage; //stage 0 = start screen, stage 1 = options, stage 2 = in game
-	private boolean handDelt; //start play if hand has been delt.  reset this boolean at the end of dealer turn
+	private int gameStage; // stage 0 = start screen, stage 1 = options, stage 2
+							// = in game
+	private boolean handDelt; // start play if hand has been delt. reset this
+								// boolean at the end of dealer turn
+	private Game game;
 
 	@Override
 	public void init() {
@@ -41,6 +44,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 		deckImg = getImage(base, "images/back.png");
 		gameStage = 0;
 		handDelt = false;
+		currentPlayer = 1;
 	}
 
 	@Override
@@ -61,6 +65,23 @@ public class GUI extends Applet implements Runnable, MouseListener {
 				background = getImage(base, "images/board.png");
 			}
 
+			if (gameStage == 3) {
+				game.startingDeal();
+				gameStage++;
+			}
+
+			if (gameStage == 4) {
+				// iin round
+			}
+
+			if (gameStage == 5) {
+				game.dealer.play(game.deck);
+			}
+
+			if (gameStage == 6) {
+				// annouce winners and restart
+			}
+
 			repaint();
 
 			try {
@@ -74,11 +95,11 @@ public class GUI extends Applet implements Runnable, MouseListener {
 
 	@Override
 	public void paint(Graphics g) {
-		
-		//always display a bg
+
+		// always display a bg
 		g.drawImage(background, 0, 0, this);
-		
-		//draw ingame board
+
+		// draw ingame board
 		if (gameStage > 1) {
 			g.drawImage(deckImg, 490, 350, this);
 			g.drawString("Round is currently on Player:  ", 25, 400);
@@ -86,14 +107,30 @@ public class GUI extends Applet implements Runnable, MouseListener {
 			for (int i = 1; i <= totalPlayers; i++) {
 				g.drawString("Player " + i, -70 + 90 * i, 100);
 			}
-			
+			g.drawString("Dealer ", 285, 295);
+		}
 
-				
-		
-			
-			
-			//draw dealer's hand
-			
+		// draw cards
+		if (gameStage >= 4) {
+			for (int i = 1; i <= totalPlayers; i++) {
+				for (int x = 0; x < game.users.size(); x++) {
+					for (int k = 0; k < game.users.get(x).hands.size(); k++) {
+						for (int j = 0; j < game.users.get(x).hands.get(k).cards
+								.size(); j++) {
+							g.drawImage(game.users.get(x).hands.get(k).cards
+									.get(j).getImage(), 20 + 90 * x + 10 * j,
+									120 + 80 * k, this);
+						}
+					}
+
+				}
+			}
+
+			for (int i = 0; i < game.dealer.hands.get(0).cards.size(); i++) {
+				g.drawImage(game.dealer.hands.get(0).cards.get(i).getImage(),
+						285 + 20 * i, 320, this);
+			}
+
 		}
 	}
 
@@ -102,30 +139,52 @@ public class GUI extends Applet implements Runnable, MouseListener {
 		mouseX = e.getX();
 		mouseY = e.getY();
 
+		if (gameStage > 2) {
+			if (mouseX > 570 && mouseX < 710) {
+				if (mouseY > 400 && mouseY < 438) {
+					// exit
+					System.exit(0);
+				} else if (mouseY > 12 && mouseY < 38) {
+					JOptionPane.showMessageDialog(null,
+							"Use the buttons on the right side to play blackjack");
+				}
+			}
+		}
+
 		// in game
-		if (gameStage > 1) {
+		if (gameStage == 4) {
 			if (mouseX > 570 && mouseX < 710) {
 				if (mouseY > 140 && mouseY < 180) {
 					// hit
+					game.users.get(currentPlayer - 1).hands.get(0).addCard(
+							game.deck.dealCard());
 					System.out.println("hit");
-					
+
 				} else if (mouseY > 183 && mouseY < 220) {
-					//stand
+					// stand
+					game.users.get(currentPlayer - 1).stand();
+
+					// if this user has no more hands, then move on to next user
+					if (game.users.get(currentPlayer - 1).numberOfHands == 0) {
+						currentPlayer++;
+
+						// if last player is done, move to
+						if (currentPlayer > totalPlayers) {
+							currentPlayer = 0;
+							gameStage++;
+						}
+					}
+
 					System.out.println("stand");
 
 				} else if (mouseY > 225 && mouseY < 260) {
-					//double down
+					// double down
 					System.out.println("double down");
 
 				} else if (mouseY > 260 && mouseY < 300) {
-					//split
+					// split
 					System.out.println("split");
 
-				} else if (mouseY > 400 && mouseY < 438) {
-					//exit
-					System.exit(0);
-				} else if (mouseY > 12 && mouseY < 38){
-					JOptionPane.showMessageDialog(null,"do you even blackjack???");
 				}
 
 			}
@@ -144,40 +203,38 @@ public class GUI extends Applet implements Runnable, MouseListener {
 
 		// options screen
 		if (gameStage == 1) {
-				if (mouseY > 95  && mouseY < 145) {
-					if(mouseX >60 && mouseX <110){
-						totalPlayers = 1;
-						gameStage = 2;
-					} else if(mouseX>140 && mouseX<188){
-						totalPlayers = 2;
-						gameStage = 2;
-					} else if(mouseX>214 && mouseX<265){
-						totalPlayers = 3;
-						gameStage = 2;
-					} else if(mouseX>295 && mouseX<343){
-						totalPlayers = 4;
-						gameStage = 2;
-					} else if(mouseX>370 && mouseX<420){
-						totalPlayers = 5;
-						gameStage = 2;
-					} else if(mouseX>448 && mouseX<500.){
-						totalPlayers = 6;
-						gameStage = 2;
-					}
-					
+			if (mouseY > 95 && mouseY < 145) {
+				if (mouseX > 60 && mouseX < 110) {
+					totalPlayers = 1;
+					gameStage = 2;
+				} else if (mouseX > 140 && mouseX < 188) {
+					totalPlayers = 2;
+					gameStage = 2;
+				} else if (mouseX > 214 && mouseX < 265) {
+					totalPlayers = 3;
+					gameStage = 2;
+				} else if (mouseX > 295 && mouseX < 343) {
+					totalPlayers = 4;
+					gameStage = 2;
+				} else if (mouseX > 370 && mouseX < 420) {
+					totalPlayers = 5;
+					gameStage = 2;
+				} else if (mouseX > 448 && mouseX < 500.) {
+					totalPlayers = 6;
+					gameStage = 2;
 				}
-				
-				
-				
-				//transition from options screen, must deal hand and start round if this occurs
-				if (gameStage == 2){
-
-				}
-				
 
 			}
 
-		
+			// transition from options screen, must deal hand and start round if
+			// this occurs
+			if (gameStage == 2) {
+				game = new Game(totalPlayers);
+				gameStage++;
+			}
+
+		}
+
 	}
 
 	@Override
@@ -202,8 +259,8 @@ public class GUI extends Applet implements Runnable, MouseListener {
 		// dont need
 
 	}
-	
-	protected void nextPlayer (){
+
+	protected void nextPlayer() {
 		currentPlayer++;
 	}
 

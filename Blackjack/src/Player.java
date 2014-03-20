@@ -27,6 +27,11 @@ public class Player {
 			return true;
 		}
 	}
+	
+	
+	
+	
+	
 	public void hit(Deck deck)
 	{
 		if (deck.getDeckSize() <= 0){

@@ -2,6 +2,8 @@ import java.util.ArrayList;
 public class Deck {
 
 	private ArrayList<Card> cards;
+	private Hand tempHand;
+	
 	Deck(int size)
 	{
 		cards = createDeck(size);
@@ -48,11 +50,11 @@ public class Deck {
 	//Not sure about this parameter
 	public Hand dealHand()
 	{
-			Hand hand = new Hand(cards.get(0), cards.get(1));
+			tempHand = new Hand(cards.get(0), cards.get(1));
 		//Remove the top 2 cards from the deck
 			cards.remove(0);
 			cards.remove(0);
-			return hand;
+			return tempHand;
 	}
 	
 	public Card dealCard()

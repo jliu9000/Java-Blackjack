@@ -4,9 +4,15 @@ public class Hand {
 	private boolean bust = false;
 	private boolean blackjack = false;
 	private int total = 0;
-	private ArrayList<Card> cards;
+	public ArrayList<Card> cards;
+	
+	Hand(){
+		
+	}
+	
 	Hand(Card card1, Card card2)
 	{
+		cards = new ArrayList<Card>();
 		cards.add(card1);
 		cards.add(card2);
 		total = calculateTotal();
@@ -119,5 +125,9 @@ public class Hand {
 	public boolean bustHand()
 	{
 		return bust;
+	}
+
+	public ArrayList<Card> getCards() {
+		return cards;
 	}
 }

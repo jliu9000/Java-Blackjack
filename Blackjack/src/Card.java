@@ -10,7 +10,7 @@ public class Card {
 	private final Suit suit;
 	private final Face face;
 	private String imageFile;
-	BufferedImage cardImage = null;
+	public BufferedImage cardImage = null;
 
 	public Card(Suit suit, Face face)
 	{

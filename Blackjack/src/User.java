@@ -1,11 +1,25 @@
+import java.util.ArrayList;
+
 
 public class User extends Player {
 	private int playerNumber;
+	
+	
 	User(int ID, Hand begHand)
 	{
-		playerNumber = ID;
-		this.hands.add(begHand);
+		//playerNumber = ID;
+		//this.hands.add(begHand);
 	}
+	
+	User(){
+		hands = new ArrayList<Hand>();
+	}
+	
+	public void takeHand(Hand h){
+		hands.add(h);
+	}
+	
+	
 	public void doubleDown(Deck deck)
 	{
 		if(hands.get(numberOfHands-1).getNumberOfCards() != 2){
