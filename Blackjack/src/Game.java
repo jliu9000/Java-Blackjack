@@ -36,10 +36,17 @@ public class Game {
 		}
 		return tempUser;
 	}
-	
+	public void clearHands(){
+		for (User u : users){
+			u.clearHand();
+		}
+		dealer.clearHand();
+	}
 	public void dealHand(){
 		for (int i =0; i<users.size(); i++){
 			users.get(i).hands.add(deck.dealHand());
 		}
 	}
+	
+	
 }

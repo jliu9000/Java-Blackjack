@@ -130,4 +130,12 @@ public class Hand {
 	public ArrayList<Card> getCards() {
 		return cards;
 	}
+
+	public boolean isBust() {
+		return bust;
+	}
+
+	public boolean isBlackjack() {
+		return blackjack;
+	}
 }

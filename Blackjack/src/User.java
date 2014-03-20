@@ -13,10 +13,12 @@ public class User extends Player {
 	
 	User(){
 		hands = new ArrayList<Hand>();
+		numberOfHands = 0;
 	}
 	
 	public void takeHand(Hand h){
 		hands.add(h);
+		numberOfHands++;
 	}
 	
 	
@@ -42,6 +44,12 @@ public class User extends Player {
 		this.hands.add(secondHand);
 		numberOfHands++;
 		}
+	}
+
+	
+	public void clearHand(){
+		hands.clear();
+		numberOfHands = 0;
 	}
 }
 

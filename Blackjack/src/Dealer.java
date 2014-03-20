@@ -17,6 +17,7 @@ public class Dealer extends Player {
 		numberOfHands++;
 	}
 	
+
 	
 	
 	public void play(Deck deck)

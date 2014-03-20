@@ -14,7 +14,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 
 	private static final int WIDTH = 720;
 	private static final int HEIGHT = 450;
-	private Image background, deckImg;
+	private Image background;
 	private URL base;
 	private int mouseX, mouseY;
 	private int currentPlayer, totalPlayers;
@@ -41,7 +41,6 @@ public class GUI extends Applet implements Runnable, MouseListener {
 		}
 
 		background = getImage(base, "images/start.png");
-		deckImg = getImage(base, "images/back.png");
 		gameStage = 0;
 		handDelt = false;
 		currentPlayer = 1;
@@ -57,6 +56,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 
 	public void run() {
 		while (true) {
+			
 			if (gameStage == 1) {
 				background = getImage(base, "images/options.png");
 			}
@@ -66,20 +66,44 @@ public class GUI extends Applet implements Runnable, MouseListener {
 			}
 
 			if (gameStage == 3) {
+				//deal
 				game.startingDeal();
 				gameStage++;
 			}
 
 			if (gameStage == 4) {
-				// iin round
+				// in round
+				if (currentPlayer > game.users.size()){
+					gameStage++;
+					currentPlayer = 0;
+				}
+				//if the last player has played, advance the game
+				
 			}
 
 			if (gameStage == 5) {
 				game.dealer.play(game.deck);
+				gameStage++;
+
 			}
 
 			if (gameStage == 6) {
-				// annouce winners and restart
+				//print winners
+				
+			}
+			
+			if (gameStage ==7){
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				
+				game.clearHands();
+				currentPlayer++;
+				gameStage = 3;
+
+				
 			}
 
 			repaint();
@@ -101,7 +125,6 @@ public class GUI extends Applet implements Runnable, MouseListener {
 
 		// draw ingame board
 		if (gameStage > 1) {
-			g.drawImage(deckImg, 490, 350, this);
 			g.drawString("Round is currently on Player:  ", 25, 400);
 			g.drawString(Integer.toString(currentPlayer), 25, 420);
 			for (int i = 1; i <= totalPlayers; i++) {
@@ -132,6 +155,10 @@ public class GUI extends Applet implements Runnable, MouseListener {
 			}
 
 		}
+		if (gameStage == 6){
+			g.drawString("Someone won, restarting round", 275, 400);
+			gameStage++;
+		}
 	}
 
 	@Override
@@ -139,6 +166,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 		mouseX = e.getX();
 		mouseY = e.getY();
 
+		//help and exit buttons work throughout the ingame stages
 		if (gameStage > 2) {
 			if (mouseX > 570 && mouseX < 710) {
 				if (mouseY > 400 && mouseY < 438) {
@@ -152,12 +180,16 @@ public class GUI extends Applet implements Runnable, MouseListener {
 		}
 
 		// in game
-		if (gameStage == 4) {
+		if (gameStage == 4 && gameStage < 6) {
 			if (mouseX > 570 && mouseX < 710) {
 				if (mouseY > 140 && mouseY < 180) {
 					// hit
 					game.users.get(currentPlayer - 1).hands.get(0).addCard(
 							game.deck.dealCard());
+					
+					if (game.users.get(currentPlayer - 1).hands.get(0).isBust()){
+						currentPlayer++;
+					}
 					System.out.println("hit");
 
 				} else if (mouseY > 183 && mouseY < 220) {
@@ -167,12 +199,6 @@ public class GUI extends Applet implements Runnable, MouseListener {
 					// if this user has no more hands, then move on to next user
 					if (game.users.get(currentPlayer - 1).numberOfHands == 0) {
 						currentPlayer++;
-
-						// if last player is done, move to
-						if (currentPlayer > totalPlayers) {
-							currentPlayer = 0;
-							gameStage++;
-						}
 					}
 
 					System.out.println("stand");
@@ -195,7 +221,6 @@ public class GUI extends Applet implements Runnable, MouseListener {
 			if (mouseX > 265 && mouseX < 450) {
 				if (mouseY > 200 && mouseY < 250) {
 					gameStage = 1;
-					System.out.println("++gameStage");
 				}
 
 			}
