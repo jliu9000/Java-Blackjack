@@ -82,7 +82,6 @@ public class GUI extends Applet implements Runnable, MouseListener {
 			}
 
 			if (gameStage == 5) {
-				//dealer play
 				game.dealer.play(game.deck);
 				gameStage++;
 
@@ -94,7 +93,6 @@ public class GUI extends Applet implements Runnable, MouseListener {
 			}
 			
 			if (gameStage ==7){
-				//round over, delay, then start new round
 				try {
 					Thread.sleep(3000);
 				} catch (InterruptedException e) {
