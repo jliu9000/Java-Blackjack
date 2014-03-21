@@ -5,3 +5,4 @@
 1395135809904	Rename field 'deck'
 1395137059609	Rename field 'img'
 1395137078592	Rename field 'cardImg'
+1395371048872	Rename method 'getCard'

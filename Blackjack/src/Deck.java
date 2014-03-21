@@ -50,6 +50,9 @@ public class Deck {
 	//Not sure about this parameter
 	public Hand dealHand()
 	{
+			if(cards.size()<2){
+				cards = createDeck(52);
+			}
 			tempHand = new Hand(cards.get(0), cards.get(1));
 		//Remove the top 2 cards from the deck
 			cards.remove(0);
@@ -59,6 +62,10 @@ public class Deck {
 	
 	public Card dealCard()
 	{
+			if(cards.size()<1){
+				cards = createDeck(52);
+			}
+
 
 			Card tempCard = cards.get(0);
 			cards.remove(0);
