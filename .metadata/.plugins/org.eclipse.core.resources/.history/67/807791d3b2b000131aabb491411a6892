@@ -16,8 +16,12 @@ public class Dealer extends Player {
 	}
 
 	public void play(Deck deck) {
+		
+		while (this.hands.get(0).getValueOfHand() < 17) {
+			this.hands.get(0).addCard(deck.dealCard());
+		}
+		stand();
 
-		this.hands.get(0).addCard(deck.dealCard());
 	}
 }
 

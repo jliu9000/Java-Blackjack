@@ -4,7 +4,7 @@ public class Hand {
 
 	private boolean bust = false;
 	private boolean blackjack = false;
-	private int total = 0;
+	private int total;
 	public ArrayList<Card> cards;
 
 	Hand() {
@@ -31,19 +31,19 @@ public class Hand {
 
 	private int calculateTotal() {
 		moveAces();
-		int handSize = cards.size();
+		int handSize = this.cards.size();
 		boolean hasBlackjack = false;
 		if (handSize == 2) {
 			hasBlackjack = checkBlackjack();
 		}
-		int total = 0;
+		total = 0;
 		Face temp;
 		if (hasBlackjack == true) {
 			blackjack = true;
 			return 21;
 		}
 		for (int i = 0; i < handSize; i++) {
-			temp = cards.get(i).getFace();
+			temp = this.cards.get(i).getFace();
 			switch (temp) {
 			case ACE:
 				if (total <= 10 && i == handSize - 1) {
@@ -106,6 +106,7 @@ public class Hand {
 	}
 
 	public int getValueOfHand() {
+		total = calculateTotal();
 		return total;
 	}
 

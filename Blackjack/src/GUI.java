@@ -25,6 +25,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 	private Game game;
 	private int currentHand;
 	private String winner;
+
 	@Override
 	public void init() {
 
@@ -85,7 +86,18 @@ public class GUI extends Applet implements Runnable, MouseListener {
 
 			if (gameStage == 5) {
 				// dealer play
-				game.dealer.play(game.deck);
+				while (game.dealer.hands.get(0).getValueOfHand() < 17) {
+					
+					game.dealer.play(game.deck);
+					repaint();
+					try {
+						Thread.sleep(750);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					
+				}
+				game.dealer.stand();
 				winner = game.calculateWinners();
 				gameStage++;
 
@@ -93,7 +105,6 @@ public class GUI extends Applet implements Runnable, MouseListener {
 
 			if (gameStage == 6) {
 				// print winners
-				
 
 			}
 
@@ -160,7 +171,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 			}
 
 		}
-		//print winners if the round is over
+		// print winners if the round is over
 		if (gameStage >= 6) {
 			g.drawString(winner, 275, 400);
 			g.drawString("Starting next round...", 275, 420);
@@ -199,7 +210,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 
 					if (game.users.get(currentPlayer - 1).hands
 							.get(currentHand).isBust()) {
-						if (game.users.get(currentPlayer - 1).hands.size() != currentHand+1) {
+						if (game.users.get(currentPlayer - 1).hands.size() != currentHand + 1) {
 							currentHand++;
 						} else {
 							currentPlayer++;
@@ -218,7 +229,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 					// currentPlayer++;
 					// }
 
-					if (game.users.get(currentPlayer - 1).hands.size() != currentHand+1) {
+					if (game.users.get(currentPlayer - 1).hands.size() != currentHand + 1) {
 						currentHand++;
 					} else {
 						currentPlayer++;
@@ -231,7 +242,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 					// double down
 					game.users.get(currentPlayer - 1).doubleDown(game.deck);
 
-					if (game.users.get(currentPlayer - 1).hands.size() != currentHand+1) {
+					if (game.users.get(currentPlayer - 1).hands.size() != currentHand + 1) {
 						currentHand++;
 					} else {
 						currentPlayer++;
