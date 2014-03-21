@@ -98,7 +98,7 @@ public class Game {
 			winningMessage += " have won";
 
 			if (!tie.isEmpty()) {
-				winningMessage += " Player(s)";
+				winningMessage += " Players()";
 
 				for (Integer j : tie) {
 					winningMessage += i + " , ";

@@ -14,7 +14,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 
 	private static final int WIDTH = 720;
 	private static final int HEIGHT = 450;
-	private Image background;
+	private Image background, dealerCard;
 	private URL base;
 	private int mouseX, mouseY;
 	private int currentPlayer, totalPlayers;
@@ -70,6 +70,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 
 			if (gameStage == 3) {
 				// deal
+				dealerCard = getImage(base, "images/back.png");
 				game.startingDeal();
 				gameStage++;
 			}
@@ -86,16 +87,21 @@ public class GUI extends Applet implements Runnable, MouseListener {
 
 			if (gameStage == 5) {
 				// dealer play
+
+				dealerCard = game.dealer.hands.get(0).cards.get(0).getImage();
+
 				while (game.dealer.hands.get(0).getValueOfHand() < 17) {
-					
-					game.dealer.play(game.deck);
+
 					repaint();
+					//small delay before dealer hitting
 					try {
-						Thread.sleep(750);
+						Thread.sleep(1000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					
+					game.dealer.play(game.deck);
+
+
 				}
 				game.dealer.stand();
 				winner = game.calculateWinners();
@@ -166,8 +172,12 @@ public class GUI extends Applet implements Runnable, MouseListener {
 			}
 
 			for (int i = 0; i < game.dealer.hands.get(0).cards.size(); i++) {
-				g.drawImage(game.dealer.hands.get(0).cards.get(i).getImage(),
-						285 + 20 * i, 320, this);
+				if (i == 0) {
+					g.drawImage(dealerCard, 285, 320, this);
+				} else {
+					g.drawImage(game.dealer.hands.get(0).cards.get(i)
+							.getImage(), 285 + 20 * i, 320, this);
+				}
 			}
 
 		}
