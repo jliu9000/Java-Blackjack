@@ -25,6 +25,14 @@ public class Card {
 
 	}
 	
+	public String toString(){
+		String s = "";
+		s = this.face +" of " +this.suit;
+		
+		return s;
+		
+	}
+	
 	private void setImageFile(Suit s, Face f)
 	{
 		switch (s){

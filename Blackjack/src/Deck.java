@@ -10,6 +10,16 @@ public class Deck {
 		shuffleDeck();
 	}
 	
+	public void printDeckCards(){
+		if (!cards.isEmpty()){
+			int count = 1;
+			for (Card c : cards){
+				System.out.println(count +": " +c.toString());
+				count++;
+			}
+		}
+	}
+	
 	private ArrayList<Card> createDeck(int size)
 	{
 		ArrayList<Card> unshuffledDeck = new ArrayList<Card>();
@@ -58,6 +68,14 @@ public class Deck {
 			cards.remove(0);
 			cards.remove(0);
 			return tempHand;
+	}
+	
+	public Hand testDealCards(Suit s1, Face f1, Suit s2, Face f2) {
+		Card c1 = new Card(s1, f1);
+		Card c2 = new Card(s2, f2);
+		Hand h = new Hand(c1, c2);
+		
+		return h;
 	}
 	
 	public Card dealCard()

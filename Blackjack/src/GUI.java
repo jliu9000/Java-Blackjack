@@ -71,8 +71,16 @@ public class GUI extends Applet implements Runnable, MouseListener {
 			if (gameStage == 3) {
 				// deal
 				dealerCard = getImage(base, "images/back.png");
+
 				game.startingDeal();
-				gameStage++;
+
+				if (game.dealer.hands.get(0).getTotal() == 21) {
+					gameStage = 5;
+					currentPlayer = 0;
+				} else {
+
+					gameStage++;
+				}
 			}
 
 			if (gameStage == 4) {
@@ -90,27 +98,41 @@ public class GUI extends Applet implements Runnable, MouseListener {
 
 				dealerCard = game.dealer.hands.get(0).cards.get(0).getImage();
 
-				while (game.dealer.hands.get(0).getValueOfHand() < 17) {
+				boolean allBust = true;
 
-					repaint();
-					//small delay before dealer hitting
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+				for (User u : game.users) {
+					for (Hand h : u.hands) {
+						if (!h.isBust()) {
+							allBust = false;
+							break;
+						}
+
 					}
-					game.dealer.play(game.deck);
+				}
 
+				if (!allBust) {
+					while (game.dealer.hands.get(0).getValueOfHand() < 17) {
 
+						repaint();
+						// small delay before dealer hitting
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						game.dealer.play(game.deck);
+
+					}
 				}
 				game.dealer.stand();
+
 				winner = game.calculateWinners();
 				gameStage++;
 
 			}
 
 			if (gameStage == 6) {
-				// print winners
+				// print winners - this is done in paint method
 
 			}
 
@@ -157,21 +179,34 @@ public class GUI extends Applet implements Runnable, MouseListener {
 
 		// draw cards
 		if (gameStage >= 4) {
-			// for (int i = 1; i <= totalPlayers; i++) {
+
 			for (int x = 0; x < game.users.size(); x++) {
 				for (int k = 0; k < game.users.get(x).hands.size(); k++) {
+
+					g.drawString(
+							"Value: "
+									+ Integer.toString(game.users.get(x).hands
+											.get(k).getTotal()), 20 + 90 * x,
+							115 + 80 * k);
+
 					for (int j = 0; j < game.users.get(x).hands.get(k).cards
 							.size(); j++) {
+
 						g.drawImage(game.users.get(x).hands.get(k).cards.get(j)
 								.getImage(), 20 + 90 * x + 10 * j,
 								120 + 80 * k, this);
 					}
 				}
 
-				// }
 			}
 
 			for (int i = 0; i < game.dealer.hands.get(0).cards.size(); i++) {
+				if (gameStage > 4) {
+					g.drawString(
+							"Value: "
+									+ Integer.toString(game.dealer.hands.get(0)
+											.getTotal()), 285, 310);
+				}
 				if (i == 0) {
 					g.drawImage(dealerCard, 285, 320, this);
 				} else {
@@ -210,7 +245,8 @@ public class GUI extends Applet implements Runnable, MouseListener {
 		}
 
 		// in game
-		if (gameStage == 4 && gameStage < 6) {
+		if (gameStage == 4 && gameStage < 6
+				&& game.users.size() >= currentPlayer) {
 			if (mouseX > 570 && mouseX < 710) {
 				if (mouseY > 140 && mouseY < 180) {
 					// hit
@@ -250,15 +286,21 @@ public class GUI extends Applet implements Runnable, MouseListener {
 
 				} else if (mouseY > 225 && mouseY < 260) {
 					// double down
-					game.users.get(currentPlayer - 1).doubleDown(game.deck);
+					if (game.users.get(currentPlayer - 1).hands
+							.get(currentHand).cards.size() > 2) {
+						System.out
+								.println("Can only double down after initial deal");
 
-					if (game.users.get(currentPlayer - 1).hands.size() != currentHand + 1) {
-						currentHand++;
 					} else {
-						currentPlayer++;
-						currentHand = 0;
-					}
+						game.users.get(currentPlayer - 1).doubleDown(game.deck);
 
+						if (game.users.get(currentPlayer - 1).hands.size() != currentHand + 1) {
+							currentHand++;
+						} else {
+							currentPlayer++;
+							currentHand = 0;
+						}
+					}
 				} else if (mouseY > 260 && mouseY < 300) {
 					// split
 					game.users.get(currentPlayer - 1).split(game.deck);

@@ -24,6 +24,17 @@ public class Game {
 		dealer.takeHand(deck.dealHand());
 	}
 
+	public void testStartingDeal() {
+		for (User a : users) {
+			a.takeHand(deck.testDealCards(Suit.DIAMONDS, Face.ACE,
+					Suit.HEARTS, Face.JACK));
+		}
+
+		dealer.takeHand(deck.testDealCards(Suit.DIAMONDS, Face.SIX,
+				Suit.HEARTS, Face.JACK));
+
+	}
+
 	private ArrayList<User> createUser(int size) {
 		ArrayList<User> tempUser = new ArrayList<User>();
 
@@ -54,40 +65,60 @@ public class Game {
 		dealerTotal = dealer.hands.get(0).getTotal();
 		int i = 1;
 
-		//dealer busts, players who have no busted win.
-		if (dealer.hands.get(0).isBust()) {
+		// dealer has blackjack on starting deal, end hand and calculate ties
+		// (if any other players starting hand is 21)
+		if (dealer.hands.get(0).getTotal() == 21
+				&& dealer.hands.get(0).cards.size() == 2) {
 			for (User u : users) {
 				for (Hand h : u.hands) {
-					h.getTotal();
-					if (!h.isBust()) {
-						winners.add(i);
+
+					if (h.getTotal() == dealerTotal) {
+						tie.add(i);
+
 					}
 				}
 				i++;
 			}
-			winningMessage = "Dealer has busted!  Player(s) ";
-			for (Integer j : winners) {
-				winningMessage += j + " , ";
-			}
-			winningMessage = winningMessage.substring(0, winningMessage.length() - 3);
-			winningMessage += " have won";
-			return winningMessage;
-			
-		}
 
-		// find users who have won or tied the dealer
-		for (User u : users) {
-			for (Hand h : u.hands) {
+		} else {
 
-				if (h.getTotal() > dealerTotal && !h.isBust()) {
-					winners.add(i);
-				} else if (h.getTotal() == dealerTotal) {
-					tie.add(i);
+			// dealer busts, players who have no busted win.
+			if (dealer.hands.get(0).isBust()) {
+				for (User u : users) {
+					for (Hand h : u.hands) {
+						h.getTotal();
+						if (!h.isBust()) {
+							winners.add(i);
+						}
+					}
+					i++;
 				}
-			}
-			i++;
-		}
+				winningMessage = "Dealer has busted!  Player(s) ";
+				for (Integer j : winners) {
+					winningMessage += j + " , ";
+				}
+				winningMessage = winningMessage.substring(0,
+						winningMessage.length() - 3);
+				winningMessage += " have won";
+				return winningMessage;
 
+			}
+
+			// find users who have won or tied the dealer
+			for (User u : users) {
+				for (Hand h : u.hands) {
+
+					if (h.getTotal() > dealerTotal && !h.isBust()) {
+						winners.add(i);
+					} else if (h.getTotal() == dealerTotal) {
+						tie.add(i);
+					}
+				}
+				i++;
+			}
+		}
+		
+		//compute winning message
 		if (!winners.isEmpty()) {
 			winningMessage = "Player(s) ";
 			for (Integer j : winners) {
@@ -109,7 +140,6 @@ public class Game {
 				winningMessage += " have tied with the Dealer";
 
 			}
-
 
 		} else if (!tie.isEmpty()) {
 			winningMessage += "Players";
