@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 
 
 public class Player {
@@ -34,18 +36,17 @@ public class Player {
 	}
 	
 	
-	public void hit(Deck deck)
+	public void hit(Card card)
 	{
-		if (deck.getDeckSize() <= 0){
-			System.out.println("Deck has no more cards");
-		}
-		else if(this.hands.get(numberOfHands-1).bustHand() || this.hands.get(numberOfHands-1).blackjackHand())
+		if(this.hands.get(numberOfHands-1).bustHand() || this.hands.get(numberOfHands-1).blackjackHand())
 		{
-			System.out.println("Cannot hit the hand is already busted or you have blackjack!");
+			JOptionPane
+			.showMessageDialog(null,
+					"You have BlackJack, Try standing!!");
 		}
 		else
 		{
-			this.hands.get(numberOfHands-1).addCard(deck.dealCard());
+			this.hands.get(numberOfHands-1).addCard(card);
 		}
 	}
 	public void stand()

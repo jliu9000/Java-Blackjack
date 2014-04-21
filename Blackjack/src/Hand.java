@@ -64,8 +64,7 @@ public class Hand {
 	}
 
 	private boolean checkBlackjack() {
-		if (cards.get(0).getFace() == Face.JACK
-				&& cards.get(1).getFace() == Face.ACE) {
+		if ( cards.get(1).getFace() == Face.ACE && total == 21) {
 			return true;
 		}
 		return false;

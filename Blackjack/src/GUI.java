@@ -251,8 +251,9 @@ public class GUI extends Applet implements Runnable, MouseListener {
 				if (mouseY > 140 && mouseY < 180) {
 					// hit
 
-					game.users.get(currentPlayer - 1).hands.get(currentHand)
-							.addCard(game.deck.dealCard());
+					//game.users.get(currentPlayer - 1).hands.get(currentHand)
+					//		.addCard(game.deck.dealCard());
+					game.users.get(currentPlayer-1).hit(game.deck.dealCard());
 
 					if (game.users.get(currentPlayer - 1).hands
 							.get(currentHand).isBust()) {
