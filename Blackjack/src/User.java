@@ -4,7 +4,6 @@ public class User extends Player {
 	private int playerNumber;
 	private int currentHand;
 	private Bank bank;
-	private double bet;
 
 
 	User(int ID, Hand begHand) {
@@ -22,17 +21,25 @@ public class User extends Player {
 		hands.add(h);
 		numberOfHands++;
 	}
-
+	
+	public void bet(double bet){
+		if(bet > 1.0 && bet < bank.checkMoney())
+		{
+			this.hands.get(numberOfHands - 1).setBet(bet);
+		}
+	}
 	
 	public void doubleDown(Deck deck) {
 		//check to see if there is enough money to bet more
-		if(bet > bank.checkMoney()){
-			System.out.println("There isn't enough money to double down");
+		double currentBet = this.hands.get(numberOfHands - 1).getBet();
+		if(currentBet > bank.checkMoney()){
+			//Display message to the screen
 		}else{
-			bank.removeMoney(bet);
-			if (hands.get(numberOfHands - 1).getNumberOfCards() != 2) {
-				System.out.println("Can only double down on initial hand");
+			if(hands.get(numberOfHands - 1).getNumberOfCards() != 2) {
+				//Display message to screen that you can only double down with 2 cards
 			} else {
+				bank.removeMoney(currentBet);
+				this.hands.get(numberOfHands - 1).setBet(2*currentBet);
 				this.hands.get(numberOfHands - 1).addCard(deck.dealCard());
 				stand();
 			}
@@ -41,11 +48,11 @@ public class User extends Player {
 
 	public void split(Deck deck) {
 		//check to see if there is enough money to bet more
+		double currentBet = this.hands.get(numberOfHands - 1).getBet();
 		
-		if(bet > bank.checkMoney()){
+		if(currentBet > bank.checkMoney()){
 			System.out.println("There isn't enough money to split");
 		}else{
-			bank.removeMoney(bet);
 			if (this.hands.get(numberOfHands - 1).getNumberOfCards() != 2) {
 				System.out.println("Can only split on initial hand");
 			} else {
@@ -54,11 +61,12 @@ public class User extends Player {
 				{
 					Hand secondHand = new Hand();
 					secondHand = this.hands.get(0).splitHand(deck);
+					secondHand.setBet(currentBet);
+					bank.removeMoney(currentBet);
 					this.hands.add(secondHand);
-
 					numberOfHands++;
 				} else {
-					System.out.println("cant split, suits not the same");
+					System.out.println("The card faces are not the same, you cannot split");
 				}
 			}
 		}

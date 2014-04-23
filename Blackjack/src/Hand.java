@@ -5,6 +5,7 @@ public class Hand {
 	private boolean bust = false;
 	private boolean blackjack = false;
 	private int total;
+	private double bet;
 	public ArrayList<Card> cards;
 
 	Hand() {
@@ -132,5 +133,13 @@ public class Hand {
 	public int getTotal() {
 		total = calculateTotal();
 		return total;
+	}
+	
+	public void setBet(double newBet){
+		bet = newBet;
+	}
+	
+	public double getBet(){
+		return bet;
 	}
 }

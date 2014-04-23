@@ -18,11 +18,7 @@ public class Bank {
 	}
 	
 	public void removeMoney(double bet){
-		if (bet > totalMoney){
-			System.out.println("This player doesn't have enough money!!");
-		} else {
 			totalMoney -= bet;
-		}
 	}
 	
 	public double checkMoney(){
