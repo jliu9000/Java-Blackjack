@@ -20,7 +20,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 	private int currentPlayer, totalPlayers;
 	private int gameStage; // stage 0 = start screen, stage 1 = options, stage 2
 							// = in game
-	private boolean handDelt; // start play if hand has been delt. reset this
+	private boolean handDealt; // start play if hand has been delt. reset this
 								// boolean at the end of dealer turn
 	private Game game;
 	private int currentHand;
@@ -44,7 +44,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 
 		background = getImage(base, "images/start.png");
 		gameStage = 0;
-		handDelt = false;
+		handDealt = false;
 		currentPlayer = 1;
 		currentHand = 0;
 	}
@@ -251,8 +251,6 @@ public class GUI extends Applet implements Runnable, MouseListener {
 				if (mouseY > 140 && mouseY < 180) {
 					// hit
 
-					//game.users.get(currentPlayer - 1).hands.get(currentHand)
-					//		.addCard(game.deck.dealCard());
 					game.users.get(currentPlayer-1).hit(game.deck.dealCard());
 
 					if (game.users.get(currentPlayer - 1).hands
