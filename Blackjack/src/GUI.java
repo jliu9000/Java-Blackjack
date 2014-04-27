@@ -276,7 +276,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 
 				for (int k = 0; k < game.users.get(x).hands.size(); k++) {
 					if (!game.users.get(x).hands.isEmpty()) {
-						if (game.users.get(k).hands.get(k).checkBlackjack()) {
+						if (game.users.get(x).hands.get(k).checkBlackjack()) {
 							g.drawString("Blackjack!", 20 + 90 * x,
 									115 + 95 * k);
 
