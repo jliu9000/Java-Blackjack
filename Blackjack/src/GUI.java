@@ -31,17 +31,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 	private Graphics graphics;
 	
 	
-	public void update(Graphics g) {
-	    if (image == null) {
-	        image = createImage(this.getWidth(), this.getHeight());
-	        graphics = image.getGraphics();
-	    }
-	    graphics.setColor(getBackground());
-	    graphics.fillRect(0,  0,  this.getWidth(),  this.getHeight());
-	    graphics.setColor(getForeground());
-	    paint(graphics);
-	    g.drawImage(image, 0, 0, this);
-	}
+	
 	
 	
 	@Override
@@ -285,7 +275,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 			for (int x = 0; x < game.users.size(); x++) {
 
 				for (int k = 0; k < game.users.get(x).hands.size(); k++) {
-					if (!game.users.get(k).hands.isEmpty()) {
+					if (!game.users.get(x).hands.isEmpty()) {
 						if (game.users.get(k).hands.get(k).checkBlackjack()) {
 							g.drawString("Blackjack!", 20 + 90 * x,
 									115 + 95 * k);
@@ -299,6 +289,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 									115 + 95 * k);
 						}
 					}
+					
 					g.drawString(
 							"Bet: "
 									+ Integer.toString(game.users.get(x).hands
@@ -515,7 +506,12 @@ public class GUI extends Applet implements Runnable, MouseListener {
 				} else if (mouseY > 12 && mouseY < 38) {
 					JOptionPane
 							.showMessageDialog(null,
-									"Use the buttons on the right side to play blackjack");
+									"Please place your bet using the arrows on the top row of the game. \n " +
+									"Once your bet is placed used the Set Bets button below to start the deal \n\n"
+											+"While in play, use the buttons below to hit, stand, double down, or split\n"
+									+"You may only double down if you have not hit your on your starting hand \n"
+											+"You may only split if your cards are the same face on the beginning hand \n\n"
+									+"~~ Good Luck! ~~");
 				}
 			}
 		}
@@ -579,6 +575,19 @@ public class GUI extends Applet implements Runnable, MouseListener {
 			}
 		}
 
+	}
+	
+	
+	public void update(Graphics g) {
+	    if (image == null) {
+	        image = createImage(this.getWidth(), this.getHeight());
+	        graphics = image.getGraphics();
+	    }
+	    graphics.setColor(getBackground());
+	    graphics.fillRect(0,  0,  this.getWidth(),  this.getHeight());
+	    graphics.setColor(getForeground());
+	    paint(graphics);
+	    g.drawImage(image, 0, 0, this);
 	}
 
 	@Override
