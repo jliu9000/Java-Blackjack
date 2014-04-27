@@ -62,6 +62,8 @@ public class Deck {
 	{
 			if(cards.size()<2){
 				cards = createDeck(52);
+				shuffleDeck();
+
 			}
 			tempHand = new Hand(cards.get(0), cards.get(1));
 		//Remove the top 2 cards from the deck
@@ -82,6 +84,7 @@ public class Deck {
 	{
 			if(cards.size()<1){
 				cards = createDeck(52);
+				shuffleDeck();
 			}
 
 

@@ -13,16 +13,16 @@
 		<item value="false" key="isRegEx"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="Players()" key="selection"/>
+		<item value="testStart" key="selection"/>
 		<list key="findhistory">
-			<item value="players()"/>
-			<item value="players"/>
-			<item value="dealercard"/>
-			<item value="handsize"/>
-			<item value="/n"/>
-			<item value="spilt"/>
-			<item value="spilthand"/>
-			<item value="spil"/>
+			<item value="teststart"/>
+			<item value="round is curr"/>
+			<item value="dbufferedImage"/>
+			<item value="update"/>
+			<item value="updATE"/>
+			<item value="playerb"/>
+			<item value="player"/>
+			<item value="tests"/>
 		</list>
 		<list key="replacehistory">
 		</list>

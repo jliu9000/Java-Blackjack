@@ -1,7 +1,9 @@
 import java.applet.Applet;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -14,18 +16,34 @@ public class GUI extends Applet implements Runnable, MouseListener {
 
 	private static final int WIDTH = 720;
 	private static final int HEIGHT = 450;
-	private Image background, dealerCard;
+	private Image background, playerBar, dealerCard, betArrows, beginBtn;
 	private URL base;
 	private int mouseX, mouseY;
-	private int currentPlayer, totalPlayers;
+	private int currentPlayer, totalPlayers = 0;
 	private int gameStage; // stage 0 = start screen, stage 1 = options, stage 2
 							// = in game
 	private boolean handDealt; // start play if hand has been delt. reset this
 								// boolean at the end of dealer turn
 	private Game game;
-	private int currentHand;
+	private int currentHand, startingBank = 0;
 	private String winner;
-
+	private Image image;
+	private Graphics graphics;
+	
+	
+	public void update(Graphics g) {
+	    if (image == null) {
+	        image = createImage(this.getWidth(), this.getHeight());
+	        graphics = image.getGraphics();
+	    }
+	    graphics.setColor(getBackground());
+	    graphics.fillRect(0,  0,  this.getWidth(),  this.getHeight());
+	    graphics.setColor(getForeground());
+	    paint(graphics);
+	    g.drawImage(image, 0, 0, this);
+	}
+	
+	
 	@Override
 	public void init() {
 
@@ -42,6 +60,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 			// TODO: handle exception
 		}
 
+		playerBar = getImage(base, "images/playerbar.png");
 		background = getImage(base, "images/start.png");
 		gameStage = 0;
 		handDealt = false;
@@ -61,10 +80,23 @@ public class GUI extends Applet implements Runnable, MouseListener {
 		while (true) {
 
 			if (gameStage == 1) {
-				background = getImage(base, "images/options.png");
+				if (totalPlayers == 0) {
+					background = getImage(base, "images/options.png");
+				} else {
+					background = getImage(base, "images/options" + totalPlayers
+							+ ".png");
+
+				}
+				beginBtn = getImage(base, "images/beginbtn.png");
+
 			}
 
-			if (gameStage > 1) {
+			if (gameStage == 2) {
+				background = getImage(base, "images/board0.png");
+				betArrows = getImage(base, "images/betarrows.png");
+			}
+
+			if (gameStage > 2) {
 				background = getImage(base, "images/board.png");
 			}
 
@@ -85,11 +117,26 @@ public class GUI extends Applet implements Runnable, MouseListener {
 
 			if (gameStage == 4) {
 				// in round
+
+				// if the last player has played, advance the game
 				if (currentPlayer > game.users.size()) {
 					gameStage++;
 					currentPlayer = 0;
+				} else if (game.users.get(currentPlayer - 1).startingBet == 0) {
+					// skip current player if they did not place a bet
+					currentPlayer++;
+				} else if (game.users.get(currentPlayer - 1).hands.get(
+						currentHand).getValueOfHand() == 21
+						&& game.users.get(currentPlayer - 1).hands.get(
+								currentHand).getNumberOfCards() == 2) {
+					if (game.users.get(currentPlayer - 1).hands.size() > currentHand + 1) {
+						currentHand++;
+					} else {
+						currentPlayer++;
+						currentHand = 0;
+					}
+
 				}
-				// if the last player has played, advance the game
 
 			}
 
@@ -127,6 +174,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 				game.dealer.stand();
 
 				winner = game.calculateWinners();
+
 				gameStage++;
 
 			}
@@ -136,7 +184,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 
 			}
 
-			if (gameStage == 7) {
+			if (gameStage >= 7) {
 				// round over, delay, then start new round
 				try {
 					Thread.sleep(3000);
@@ -145,8 +193,13 @@ public class GUI extends Applet implements Runnable, MouseListener {
 				}
 
 				game.clearHands();
+				game.addUserWinnings();
 				currentPlayer++;
-				gameStage = 3;
+				for (int i = 0; i < totalPlayers; i++) {
+					game.users.get(i).startingBet = 0;
+					game.users.get(i).clearWinnings();
+				}
+				gameStage = 2;
 
 			}
 
@@ -163,38 +216,101 @@ public class GUI extends Applet implements Runnable, MouseListener {
 
 	@Override
 	public void paint(Graphics g) {
+	    Graphics2D g2 = (Graphics2D) g;
 
 		// always display a bg
 		g.drawImage(background, 0, 0, this);
 
+		// draw starting bank string
+		if (gameStage == 1) {
+			g.setFont(new Font("TimesRoman", Font.PLAIN, 30));
+			g.drawString(Integer.toString(startingBank), 230, 312);
+			g.drawImage(beginBtn, 460, 220, this);
+
+		}
+
 		// draw ingame board
 		if (gameStage > 1) {
-			g.drawString("Round is currently on Player:  ", 25, 400);
-			g.drawString(Integer.toString(currentPlayer), 25, 420);
+
 			for (int i = 1; i <= totalPlayers; i++) {
 				g.drawString("Player " + i, -70 + 90 * i, 100);
 			}
 			g.drawString("Dealer ", 285, 295);
+
+		}
+
+		// reset font size
+		if (gameStage == 2) {
+			g.setFont(new Font("TimesRoman", Font.PLAIN, 12));
+		}
+
+		// always draw bank after options selection
+		if (gameStage >= 2) {
+			for (int x = 0; x < game.users.size(); x++) {
+
+				// draw starting bank
+				g.drawString(
+						"Bank: "
+								+ Integer.toString(game.users.get(x).getBank()
+										.checkMoney()), 14 + 90 * x, 25);
+			}
+
+		}
+
+		// betting stage
+		if (gameStage == 2) {
+			for (int x = 0; x < game.users.size(); x++) {
+
+				// draw bet amount
+				g.drawString("Bet: ", 14 + 90 * x, 40);
+
+				g.drawString(Integer.toString(game.users.get(x).startingBet),
+						36 + 90 * x, 57);
+
+				// draw bet arrows
+				g.drawImage(betArrows, 56 + 90 * x, 36, this);
+			}
 		}
 
 		// draw cards
 		if (gameStage >= 4) {
 
-			for (int x = 0; x < game.users.size(); x++) {
-				for (int k = 0; k < game.users.get(x).hands.size(); k++) {
+			// draw bar to show current player
 
+			if (currentPlayer <= totalPlayers) {
+				g.drawImage(playerBar, 15 + 90 * (currentPlayer - 1),
+						135 + 95 * currentHand, this);
+			}
+
+			for (int x = 0; x < game.users.size(); x++) {
+
+				for (int k = 0; k < game.users.get(x).hands.size(); k++) {
+					if (!game.users.get(k).hands.isEmpty()) {
+						if (game.users.get(k).hands.get(k).checkBlackjack()) {
+							g.drawString("Blackjack!", 20 + 90 * x,
+									115 + 95 * k);
+
+						} else {
+							g.drawString(
+									"Value: "
+											+ Integer.toString(game.users
+													.get(x).hands.get(k)
+													.getTotal()), 20 + 90 * x,
+									115 + 95 * k);
+						}
+					}
 					g.drawString(
-							"Value: "
+							"Bet: "
 									+ Integer.toString(game.users.get(x).hands
-											.get(k).getTotal()), 20 + 90 * x,
-							115 + 80 * k);
+											.get(k).getBet()), 20 + 90 * x,
+							130 + 95 * k);
 
 					for (int j = 0; j < game.users.get(x).hands.get(k).cards
 							.size(); j++) {
 
 						g.drawImage(game.users.get(x).hands.get(k).cards.get(j)
 								.getImage(), 20 + 90 * x + 10 * j,
-								120 + 80 * k, this);
+								140 + 95 * k, this);
 					}
 				}
 
@@ -218,9 +334,14 @@ public class GUI extends Applet implements Runnable, MouseListener {
 		}
 		// print winners if the round is over
 		if (gameStage >= 6) {
+			for (int i = 0; i < game.users.size(); i++) {
+				g.drawString(
+						"+" + Integer.toString(game.users.get(i).getMoneyWon()),
+						15 + 90 * i, 50);
+
+			}
 			g.drawString(winner, 275, 400);
 			g.drawString("Starting next round...", 275, 420);
-
 			gameStage++;
 		}
 	}
@@ -230,8 +351,163 @@ public class GUI extends Applet implements Runnable, MouseListener {
 		mouseX = e.getX();
 		mouseY = e.getY();
 
+		// start screen
+		if (gameStage == 0) {
+			if (mouseX > 265 && mouseX < 450) {
+				if (mouseY > 200 && mouseY < 250) {
+					gameStage = 1;
+				}
+
+			}
+		}
+
+		// options screen
+		if (gameStage == 1) {
+			if (mouseY > 95 && mouseY < 145) {
+				if (mouseX > 60 && mouseX < 110) {
+					totalPlayers = 1;
+				} else if (mouseX > 140 && mouseX < 188) {
+					totalPlayers = 2;
+				} else if (mouseX > 214 && mouseX < 265) {
+					totalPlayers = 3;
+				} else if (mouseX > 295 && mouseX < 343) {
+					totalPlayers = 4;
+				} else if (mouseX > 370 && mouseX < 420) {
+					totalPlayers = 5;
+				} else if (mouseX > 448 && mouseX < 500.) {
+					totalPlayers = 6;
+				}
+			}
+
+			// set starting bank
+			if (mouseX > 300 && mouseX < 370) {
+				if (mouseY > 260 && mouseY < 302) {
+					startingBank += 50;
+				} else if (mouseY > 310 && mouseY < 350) {
+					if (startingBank >= 50) {
+						startingBank -= 50;
+
+					}
+				}
+
+			}
+
+			// begin
+			if (mouseX > 460 && mouseX < 660) {
+				if (mouseY > 220 && mouseY < 420) {
+					System.out.println("begin");
+					if (totalPlayers > 0 && startingBank > 0) {
+						game = new Game(totalPlayers, startingBank);
+
+						gameStage++;
+					}
+				}
+			}
+
+		}
+
+		// log starting bet clicks
+		if (gameStage == 2) {
+			boolean betSet = false;
+			// check if a bet has been set yet
+			if (!betSet) {
+				for (int i = 0; i < totalPlayers; i++) {
+					if (game.users.get(i).startingBet > 0) {
+						betSet = true;
+					}
+
+				}
+			}
+			// start the hand if at least 1 bet has been set
+			if (mouseX > 550 && mouseX < 700) {
+				if (mouseY > 40 && mouseY < 135) {
+					if (betSet) {
+
+						gameStage++;
+					}
+				}
+			}
+
+			// increase bet
+			if (mouseY > 25 && mouseY < 51) {
+				// player 1
+				if (mouseX > 54 && mouseX < 78) {
+					game.users.get(0).increaseBet();
+					// player 2
+				} else if (mouseX > 145 && mouseX < 169) {
+					if (game.users.size() >= 2) {
+						game.users.get(1).increaseBet();
+					}
+
+					// player 3
+				} else if (mouseX > 235 && mouseX < 259) {
+					if (game.users.size() >= 3) {
+						game.users.get(2).increaseBet();
+					}
+
+					// player 4
+				} else if (mouseX > 325 && mouseX < 349) {
+					if (game.users.size() >= 4) {
+						game.users.get(3).increaseBet();
+					}
+
+					// player 5
+				} else if (mouseX > 415 && mouseX < 439) {
+					if (game.users.size() >= 5) {
+						game.users.get(4).increaseBet();
+					}
+
+					// player 6
+				} else if (mouseX > 505 && mouseX < 529) {
+					if (game.users.size() == 6) {
+						game.users.get(5).increaseBet();
+					}
+				}
+
+			}
+
+			// decrease bet
+			if (mouseY > 51 && mouseY < 72) {
+				// player 1
+				if (mouseX > 54 && mouseX < 78) {
+					game.users.get(0).decreaseBet();
+					// player 2
+				} else if (mouseX > 145 && mouseX < 169) {
+					if (game.users.size() >= 2) {
+						game.users.get(1).decreaseBet();
+					}
+
+					// player 3
+				} else if (mouseX > 235 && mouseX < 259) {
+					if (game.users.size() >= 3) {
+						game.users.get(2).decreaseBet();
+					}
+
+					// player 4
+				} else if (mouseX > 325 && mouseX < 349) {
+					if (game.users.size() >= 4) {
+						game.users.get(3).decreaseBet();
+					}
+
+					// player 5
+				} else if (mouseX > 415 && mouseX < 439) {
+					if (game.users.size() >= 5) {
+						game.users.get(4).decreaseBet();
+					}
+
+					// player 6
+				} else if (mouseX > 505 && mouseX < 529) {
+					if (game.users.size() == 6) {
+						game.users.get(5).decreaseBet();
+					}
+				}
+
+			}
+
+		}
+
 		// help and exit buttons work throughout the ingame stages
-		if (gameStage > 2) {
+		if (gameStage >= 2) {
 			if (mouseX > 570 && mouseX < 710) {
 				if (mouseY > 400 && mouseY < 438) {
 					// exit
@@ -251,30 +527,25 @@ public class GUI extends Applet implements Runnable, MouseListener {
 				if (mouseY > 140 && mouseY < 180) {
 					// hit
 
-					game.users.get(currentPlayer-1).hit(game.deck.dealCard());
-
+					game.users.get(currentPlayer - 1).hit(game.deck.dealCard(),
+							currentHand);
 					if (game.users.get(currentPlayer - 1).hands
 							.get(currentHand).isBust()) {
-						if (game.users.get(currentPlayer - 1).hands.size() != currentHand + 1) {
+						if (game.users.get(currentPlayer - 1).hands.size() > currentHand + 1) {
 							currentHand++;
 						} else {
 							currentPlayer++;
 							currentHand = 0;
 						}
 					}
+
 					System.out.println("hit");
 
 				} else if (mouseY > 183 && mouseY < 220) {
 					// stand
 					game.users.get(currentPlayer - 1).stand();
 
-					// if this user has no more hands, then move on to next user
-					// if (game.users.get(currentPlayer - 1).numberOfHands == 0)
-					// {
-					// currentPlayer++;
-					// }
-
-					if (game.users.get(currentPlayer - 1).hands.size() != currentHand + 1) {
+					if (game.users.get(currentPlayer - 1).hands.size() > currentHand + 1) {
 						currentHand++;
 					} else {
 						currentPlayer++;
@@ -287,13 +558,12 @@ public class GUI extends Applet implements Runnable, MouseListener {
 					// double down
 					if (game.users.get(currentPlayer - 1).hands
 							.get(currentHand).cards.size() > 2) {
-						System.out
-								.println("Can only double down after initial deal");
 
 					} else {
-						game.users.get(currentPlayer - 1).doubleDown(game.deck);
+						game.users.get(currentPlayer - 1).doubleDown(game.deck,
+								currentHand);
 
-						if (game.users.get(currentPlayer - 1).hands.size() != currentHand + 1) {
+						if (game.users.get(currentPlayer - 1).hands.size() > currentHand + 1) {
 							currentHand++;
 						} else {
 							currentPlayer++;
@@ -303,54 +573,10 @@ public class GUI extends Applet implements Runnable, MouseListener {
 				} else if (mouseY > 260 && mouseY < 300) {
 					// split
 					game.users.get(currentPlayer - 1).split(game.deck);
-
+					System.out.println(currentHand);
 				}
 
 			}
-		}
-
-		// start screen
-		if (gameStage == 0) {
-			if (mouseX > 265 && mouseX < 450) {
-				if (mouseY > 200 && mouseY < 250) {
-					gameStage = 1;
-				}
-
-			}
-		}
-
-		// options screen
-		if (gameStage == 1) {
-			if (mouseY > 95 && mouseY < 145) {
-				if (mouseX > 60 && mouseX < 110) {
-					totalPlayers = 1;
-					gameStage = 2;
-				} else if (mouseX > 140 && mouseX < 188) {
-					totalPlayers = 2;
-					gameStage = 2;
-				} else if (mouseX > 214 && mouseX < 265) {
-					totalPlayers = 3;
-					gameStage = 2;
-				} else if (mouseX > 295 && mouseX < 343) {
-					totalPlayers = 4;
-					gameStage = 2;
-				} else if (mouseX > 370 && mouseX < 420) {
-					totalPlayers = 5;
-					gameStage = 2;
-				} else if (mouseX > 448 && mouseX < 500.) {
-					totalPlayers = 6;
-					gameStage = 2;
-				}
-
-			}
-
-			// transition from options screen, must deal hand and start round if
-			// this occurs
-			if (gameStage == 2) {
-				game = new Game(totalPlayers);
-				gameStage++;
-			}
-
 		}
 
 	}

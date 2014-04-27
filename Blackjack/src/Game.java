@@ -5,6 +5,8 @@ public class Game {
 	public ArrayList<User> users;
 	public Dealer dealer;
 	public Deck deck;
+	ArrayList<Integer> winners = new ArrayList<Integer>();
+	ArrayList<Integer> tie = new ArrayList<Integer>();
 
 	Game(int numberOfPlayers) {
 		dealer = new Dealer();
@@ -17,17 +19,37 @@ public class Game {
 		// dealer = new Dealer(this.deck.dealHand());
 	}
 
+	Game(int numberOfPlayers, int startingBank) {
+		dealer = new Dealer();
+		users = new ArrayList<User>();
+		for (int i = 1; i <= numberOfPlayers; i++) {
+			users.add(new User(startingBank));
+		}
+		deck = new Deck(52);
+		deck.shuffleDeck();
+		// dealer = new Dealer(this.deck.dealHand());
+	}
+
 	public void startingDeal() {
 		for (User a : users) {
-			a.takeHand(deck.dealHand());
+			if (a.startingBet > 0) {
+				a.takeHand(deck.dealHand());
+				a.hands.get(0).setBet(a.startingBet);
+				a.takeBetFromBank();
+			}
 		}
 		dealer.takeHand(deck.dealHand());
 	}
 
 	public void testStartingDeal() {
 		for (User a : users) {
-			a.takeHand(deck.testDealCards(Suit.DIAMONDS, Face.ACE,
-					Suit.HEARTS, Face.JACK));
+			if (a.startingBet > 0) {
+
+				a.takeHand(deck.testDealCards(Suit.DIAMONDS, Face.ACE,
+						Suit.HEARTS, Face.FIVE));
+				a.hands.get(0).setBet(a.startingBet);
+				a.takeBetFromBank();
+			}
 		}
 
 		dealer.takeHand(deck.testDealCards(Suit.DIAMONDS, Face.SIX,
@@ -57,10 +79,23 @@ public class Game {
 		}
 	}
 
+	public void resetWinningsCounter() {
+		for (User u : users) {
+			u.clearWinnings();
+
+		}
+	}
+
+	public void addUserWinnings() {
+		for (User u : users) {
+			u.collectWinnings();
+		}
+	}
+
 	public String calculateWinners() {
 		int dealerTotal;
-		ArrayList<Integer> winners = new ArrayList<Integer>();
-		ArrayList<Integer> tie = new ArrayList<Integer>();
+		winners = new ArrayList<Integer>();
+		tie = new ArrayList<Integer>();
 		String winningMessage = "";
 		dealerTotal = dealer.hands.get(0).getTotal();
 		int i = 1;
@@ -73,7 +108,10 @@ public class Game {
 				for (Hand h : u.hands) {
 
 					if (h.getTotal() == dealerTotal) {
-						tie.add(i);
+						if (!tie.contains(i)) {
+							tie.add(i);
+						}
+						users.get(i).addMoneyWon(h.getBet());
 
 					}
 				}
@@ -88,7 +126,18 @@ public class Game {
 					for (Hand h : u.hands) {
 						h.getTotal();
 						if (!h.isBust()) {
-							winners.add(i);
+							if (!winners.contains(i)) {
+								winners.add(i);
+							}
+							if (h.getNumberOfCards() == 2
+									&& h.getValueOfHand() == 21) {
+
+								u.addMoneyWon(h.getBet() * 3 / 2 + h.getBet());
+							} else {
+
+								u.addMoneyWon(h.getBet() * 2);
+
+							}
 						}
 					}
 					i++;
@@ -102,23 +151,40 @@ public class Game {
 				winningMessage += " have won";
 				return winningMessage;
 
-			}
+			} else {
 
-			// find users who have won or tied the dealer
-			for (User u : users) {
-				for (Hand h : u.hands) {
+				// find users who have won or tied the dealer
+				for (User u : users) {
+					for (Hand h : u.hands) {
 
-					if (h.getTotal() > dealerTotal && !h.isBust()) {
-						winners.add(i);
-					} else if (h.getTotal() == dealerTotal) {
-						tie.add(i);
+						if (h.getTotal() > dealerTotal && !h.isBust()) {
+							if (!winners.contains(i)) {
+								winners.add(i);
+							}
+							if (h.getNumberOfCards() == 2
+									&& h.getValueOfHand() == 21) {
+
+								u.addMoneyWon(h.getBet() * 3 / 2 + h.getBet());
+							} else {
+
+								u.addMoneyWon(h.getBet() * 2);
+
+							}
+
+						} else if (h.getTotal() == dealerTotal) {
+							if (!tie.contains(i)) {
+								tie.add(i);
+							}
+							u.addMoneyWon(h.getBet());
+
+						}
 					}
+					i++;
 				}
-				i++;
 			}
 		}
-		
-		//compute winning message
+
+		// compute winning message
 		if (!winners.isEmpty()) {
 			winningMessage = "Player(s) ";
 			for (Integer j : winners) {
@@ -129,7 +195,7 @@ public class Game {
 			winningMessage += " have won";
 
 			if (!tie.isEmpty()) {
-				winningMessage += " Player(s)";
+				winningMessage += " Player(s) ";
 
 				for (Integer j : tie) {
 					winningMessage += i + " , ";
@@ -142,7 +208,7 @@ public class Game {
 			}
 
 		} else if (!tie.isEmpty()) {
-			winningMessage += "Players";
+			winningMessage += "Player(s) ";
 
 			for (Integer j : tie) {
 				winningMessage += j + " , ";

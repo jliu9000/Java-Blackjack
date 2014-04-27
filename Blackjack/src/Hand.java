@@ -5,8 +5,9 @@ public class Hand {
 	private boolean bust = false;
 	private boolean blackjack = false;
 	private int total;
-	private double bet;
+	private int bet;
 	public ArrayList<Card> cards;
+	
 
 	Hand() {
 
@@ -64,8 +65,8 @@ public class Hand {
 		return total;
 	}
 
-	private boolean checkBlackjack() {
-		if ( cards.get(1).getFace() == Face.ACE && total == 21) {
+	public boolean checkBlackjack() {
+		if (cards.size()==2 & (cards.get(1).getFace() == Face.ACE || cards.get(0).getFace() == Face.ACE) && total == 21) {
 			return true;
 		}
 		return false;
@@ -135,11 +136,11 @@ public class Hand {
 		return total;
 	}
 	
-	public void setBet(double newBet){
-		bet = newBet;
+	public void setBet(int bet2){
+		bet = bet2;
 	}
 	
-	public double getBet(){
+	public int getBet(){
 		return bet;
 	}
 }
