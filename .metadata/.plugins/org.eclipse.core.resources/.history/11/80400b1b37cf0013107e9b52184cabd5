@@ -76,7 +76,7 @@ public class User extends Player {
 		}
 	}
 
-	public boolean doubleDown(Deck deck) {
+	public void doubleDown(Deck deck) {
 		// check to see if there is enough money to bet more
 		int currentBet = this.hands.get(numberOfHands - 1).getBet();
 		if (currentBet > bank.checkMoney()) {
@@ -90,15 +90,11 @@ public class User extends Player {
 				this.hands.get(numberOfHands - 1).setBet(2 * currentBet);
 				this.hands.get(numberOfHands - 1).addCard(deck.dealCard());
 				stand();
-				return true;
 			}
 		}
-		return false;
-		
-		
 	}
 	
-	public boolean doubleDown(Deck deck, int currentHand) {
+	public void doubleDown(Deck deck, int currentHand) {
 		// check to see if there is enough money to bet more
 		int currentBet = this.hands.get(currentHand).getBet();
 		if (currentBet > bank.checkMoney()) {
@@ -111,13 +107,9 @@ public class User extends Player {
 				bank.removeMoney(currentBet);
 				this.hands.get(currentHand).setBet(2 * currentBet);
 				this.hands.get(currentHand).addCard(deck.dealCard());
-				return true;
 
 			}
 		}
-		
-		return false;
-
 	}
 
 

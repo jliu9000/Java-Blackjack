@@ -29,11 +29,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 	private String winner;
 	private Image image;
 	private Graphics graphics;
-	
-	
-	
-	
-	
+
 	@Override
 	public void init() {
 
@@ -196,7 +192,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 			repaint();
 
 			try {
-				Thread.sleep(350);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -206,7 +202,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 
 	@Override
 	public void paint(Graphics g) {
-	    Graphics2D g2 = (Graphics2D) g;
+		Graphics2D g2 = (Graphics2D) g;
 
 		// always display a bg
 		g.drawImage(background, 0, 0, this);
@@ -266,7 +262,6 @@ public class GUI extends Applet implements Runnable, MouseListener {
 		if (gameStage >= 4) {
 
 			// draw bar to show current player
-
 			if (currentPlayer <= totalPlayers) {
 				g.drawImage(playerBar, 15 + 90 * (currentPlayer - 1),
 						135 + 95 * currentHand, this);
@@ -280,6 +275,14 @@ public class GUI extends Applet implements Runnable, MouseListener {
 							g.drawString("Blackjack!", 20 + 90 * x,
 									115 + 95 * k);
 
+						} else if (game.users.get(x).hands.get(k)
+								.getValueOfHand() > 21) {
+							g.drawString(
+									"Bust: ("
+											+ Integer.toString(game.users
+													.get(x).hands.get(k)
+													.getTotal()) + ")",
+									20 + 90 * x, 115 + 95 * k);
 						} else {
 							g.drawString(
 									"Value: "
@@ -289,7 +292,7 @@ public class GUI extends Applet implements Runnable, MouseListener {
 									115 + 95 * k);
 						}
 					}
-					
+
 					g.drawString(
 							"Bet: "
 									+ Integer.toString(game.users.get(x).hands
@@ -505,13 +508,14 @@ public class GUI extends Applet implements Runnable, MouseListener {
 					System.exit(0);
 				} else if (mouseY > 12 && mouseY < 38) {
 					JOptionPane
-							.showMessageDialog(null,
-									"Please place your bet using the arrows on the top row of the game. \n " +
-									"Once your bet is placed used the Set Bets button below to start the deal \n\n"
-											+"While in play, use the buttons below to hit, stand, double down, or split\n"
-									+"You may only double down if you have not hit your on your starting hand \n"
-											+"You may only split if your cards are the same face on the beginning hand \n\n"
-									+"~~ Good Luck! ~~");
+							.showMessageDialog(
+									null,
+									"Please place your bet using the arrows on the top row of the game. \n "
+											+ "Once your bet is placed used the Set Bets button below to start the deal \n\n"
+											+ "While in play, use the buttons below to hit, stand, double down, or split\n"
+											+ "You may only double down if you have not hit your on your starting hand \n"
+											+ "You may only split if your cards are the same face on the beginning hand \n\n"
+											+ "~~ Good Luck! ~~");
 				}
 			}
 		}
@@ -552,42 +556,42 @@ public class GUI extends Applet implements Runnable, MouseListener {
 
 				} else if (mouseY > 225 && mouseY < 260) {
 					// double down
+					System.out.println("dd");
 					if (game.users.get(currentPlayer - 1).hands
 							.get(currentHand).cards.size() > 2) {
 
 					} else {
-						game.users.get(currentPlayer - 1).doubleDown(game.deck,
-								currentHand);
-
-						if (game.users.get(currentPlayer - 1).hands.size() > currentHand + 1) {
-							currentHand++;
-						} else {
-							currentPlayer++;
-							currentHand = 0;
+						boolean ddSuccessful = false;
+						ddSuccessful = game.users.get(currentPlayer - 1)
+								.doubleDown(game.deck, currentHand);
+						if (ddSuccessful) {
+							if (game.users.get(currentPlayer - 1).hands.size() > currentHand + 1) {
+								currentHand++;
+							} else {
+								currentPlayer++;
+								currentHand = 0;
+							}
 						}
+						
 					}
 				} else if (mouseY > 260 && mouseY < 300) {
 					// split
 					game.users.get(currentPlayer - 1).split(game.deck);
-					System.out.println(currentHand);
 				}
 
 			}
 		}
 
 	}
-	
-	
+
 	public void update(Graphics g) {
-	    if (image == null) {
-	        image = createImage(this.getWidth(), this.getHeight());
-	        graphics = image.getGraphics();
-	    }
-	    graphics.setColor(getBackground());
-	    graphics.fillRect(0,  0,  this.getWidth(),  this.getHeight());
-	    graphics.setColor(getForeground());
-	    paint(graphics);
-	    g.drawImage(image, 0, 0, this);
+		if (image == null) {
+			image = createImage(this.getWidth(), this.getHeight());
+			graphics = image.getGraphics();
+		}
+		graphics.fillRect(0, 0, this.getWidth(), this.getHeight());
+		paint(graphics);
+		g.drawImage(image, 0, 0, this);
 	}
 
 	@Override
